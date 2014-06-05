@@ -12,11 +12,11 @@ int main(int argc, const char *argv[])
 		if(a&1)odd[co++]=a;
 		else even[ce++]=a;
 	}
-	if(p>ce+co/2 || co<k-p || (co-(k-p))%2!=0)
-	{
-		puts("NO");
-		return 0;
-	}
+	//if(p>ce+co/2 || co<k-p || (co-(k-p))%2!=0)
+	//{
+	//	puts("NO");
+	//	return 0;
+	//}
 	/*
 	if(p==ce)
 	{
@@ -34,7 +34,7 @@ int main(int argc, const char *argv[])
 	*/
 	if(p<=ce)
 	{
-		if((co-(k-p))%2!=0)
+		if(co<(k-p) || (co-(k-p))%2!=0)
 		{
 			puts("NO");
 			return 0;
@@ -53,7 +53,7 @@ int main(int argc, const char *argv[])
 	}
 	else
 	{
-		if(k-p+2*(p-ce)!=co)
+		if(k-p+2*(p-ce) < co || (k-p+2*(p-ce)-co)%2!=0)
 		{
 			puts("NO");
 			return 0;
@@ -65,7 +65,9 @@ int main(int argc, const char *argv[])
 		{
 			printf("2 %d %d\n",odd[2*i],odd[2*i+1]);
 		}
-		for(int i=0;i<k-p;++i)
+		for(int i=0;i<k-p-1;++i)
+			printf("1 %d\n",odd[2*(p-ce)+i]);
+		for(int i=k-p-1;i<co;++i)
 			printf("1 %d\n",odd[i]);
 	}
 	return 0;
