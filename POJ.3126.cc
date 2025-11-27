@@ -48,7 +48,7 @@ int bfs() {
         for (int j = from; j <= from + 9 * base; j += base) { // pit 1 <=
           if (visited[j] || !isprime[j]) continue;
           Q.push(j);
-          visited[j] = true;
+          visited[j] = true; // pit 5
           // pre[j] = curr;
           if (j == target) {
             /*
@@ -65,6 +65,7 @@ int bfs() {
     }
     depth++;
   }
+  depth = -1;
   return depth;
 }
 int main() {
@@ -72,6 +73,8 @@ int main() {
   cin >> n;
   while(n--) {
     cin >> start >> target;
+    int depth = bfs();
+    if (depth < 0) cout << "Impossible" << endl;
     cout << bfs() << endl;
   }
 }
