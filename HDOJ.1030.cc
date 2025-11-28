@@ -21,23 +21,29 @@ pair<int, int> coor(int n) {
   return {r + 1, n - r * r};
 }
 
+int manhattan(int a, int b) {
+  pair<int, int> pa = coor(a), pb = coor(b);
+  return abs(pa.first - pb.first) + abs(pa.second - pb.second);
+}
 unordered_map<int, bool> visited;
-int steps = 0;
-void bfs() {
-  pair<int, int> pm = coor(M), pn = coor(N);
+int bfs() {
   queue<int> Q;
   Q.push(M);
-  bool flag = false;
+  visited.clear();
+  visited[M] = true;
+  int steps = 0;
   int curr, row, col;
+  int minCost = manhattan(M, N);
   while(!Q.empty()) {
     int t = Q.size();
+    // cout << t << endl;
     while(t--) {
-      if (flag) break;
       curr = Q.front();
       Q.pop();
       pair<int, int> p = coor(curr);
       row = p.first;
       col = p.second;
+      cout << steps << " " << curr << " (" << row << "," << col << ") " << endl;
       vector<int> next;
       if (col == 1) { // first
         next.push_back(curr + 1);
@@ -58,10 +64,9 @@ void bfs() {
 
       for (auto num: next) {
         if (visited.count(num)) continue;
+        // if (manhattan(num, N) >= minCost) continue;
         if (num == N) {
-          cout << steps + 1 << endl;
-          flag = true;
-          break;
+          return steps + 1;
         }
         Q.push(num);
         visited[num] = true;
@@ -69,9 +74,11 @@ void bfs() {
     }
     ++steps;
   }
+  return 0;
 }
 int main() {
   cin >> M >> N;
   if (M > N) swap(M, N);
-  bfs();
+  int steps = bfs();
+  cout << steps  << endl;
 }
