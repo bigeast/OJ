@@ -21,64 +21,47 @@ pair<int, int> coor(int n) {
   return {r + 1, n - r * r};
 }
 
-int manhattan(int a, int b) {
-  pair<int, int> pa = coor(a), pb = coor(b);
-  return abs(pa.first - pb.first) + abs(pa.second - pb.second);
-}
-unordered_map<int, bool> visited;
-int bfs() {
-  queue<int> Q;
-  Q.push(M);
-  visited.clear();
-  visited[M] = true;
-  int steps = 0;
-  int curr, row, col;
-  int minCost = manhattan(M, N);
-  while(!Q.empty()) {
-    int t = Q.size();
-    // cout << t << endl;
-    while(t--) {
-      curr = Q.front();
-      Q.pop();
-      pair<int, int> p = coor(curr);
-      row = p.first;
-      col = p.second;
-      cout << steps << " " << curr << " (" << row << "," << col << ") " << endl;
-      vector<int> next;
-      if (col == 1) { // first
-        next.push_back(curr + 1);
-        next.push_back(curr + 2 * row);
-      } else if (col == 2 * row - 1) { // last
-        next.push_back(curr - 1);
-        next.push_back(curr + 2 * row);
-      } else {
-        if (col % 2 == 1) {
-          next.push_back(curr - 1);
-          next.push_back(curr + 1);
-          next.push_back(curr + 2 * row);
-        } else {
-          next.push_back(curr - 1);
-          next.push_back(curr + 1);
-        }
-      }
-
-      for (auto num: next) {
-        if (visited.count(num)) continue;
-        // if (manhattan(num, N) >= minCost) continue;
-        if (num == N) {
-          return steps + 1;
-        }
-        Q.push(num);
-        visited[num] = true;
-      }
-    }
-    ++steps;
-  }
-  return 0;
+pair<int, int> getInterSections(int row, int col, int targetRow) {
+  return {col + 1, 2 * (targetRow - row) + col - 1};
 }
 int main() {
   cin >> M >> N;
   if (M > N) swap(M, N);
-  int steps = bfs();
-  cout << steps  << endl;
+  auto [xM, yM] = coor(M);
+  auto [xN, yN] = coor(N);
+  // cout << xM << " " << yM << endl;
+  // cout << xN << " " << yN << endl;
+  int ans = 0;
+  if (xM == xN) {
+    ans = yN - yM;
+  } else {
+    int dx, dy;
+    if (yM % 2 == 1) { // 正三角
+      // 经过 2 * (xN - xM) - 1 步，可到达第一个交点(xN, yM + 1)
+      // (xM, yM) 本层共有 2*xM + 1 个元素，因此后面元素个数是 2*xM + 1 - yM
+      // 平移到 xN 行，再补充一个三角，对称点后面元素个数是 2*xM + 2 - yM
+      // 对称点为 (xN, 2*xN + 1 - (2*xM + 2 - yM)) = (xN, 2 *(xN - xM) + yM - 1)
+      dx = 2 * (xN - xM) - 1;
+      auto [y1, y2] = getInterSections(xM, yM, xN);
+      dy = min(abs(yN - y1), abs(yN - y2));
+      // cout << "dx " << dx << endl;
+      // cout << "dy " << dy << endl;
+      // cout << "y " << y1 << " " << y2 << endl;
+    } else {
+      // 倒三角，可以转化为两个相邻的正三角之后，复用上面的公式，注意 dx 多走了一步要加 1
+      // dx = 2 * (xN - xM)
+      // (xM, yM - 1) -> (xN, yM), ()
+      // (xM, yM + 1)
+      dx = 2 * (xN - xM);
+      auto [y1, y2] = getInterSections(xM, yM - 1, xN);
+      auto [y3, y4] = getInterSections(xM, yM + 1, xN);
+      dy = min(abs(yN - y1), abs(yN - y2));
+      dy = min(dy, min(abs(yN - y3), abs(yN - y4)));
+      // cout << "dx " << dx << endl;
+      // cout << "dy " << dy << endl;
+      // cout << "y " << y1 << " " << y2 << " " << y3 << " " << y4 << endl;
+    }
+    ans = dx + dy;
+  }
+  cout << ans << endl;
 }
