@@ -44,10 +44,8 @@ int getAnsFromDown(int xM, int yM, int xN, int yN) {
 int main() {
   cin >> M >> N;
   if (M > N) swap(M, N);
-  auto [xM, yM] = coor(M);
-  auto [xN, yN] = coor(N);
-  // cout << xM << " " << yM << endl;
-  // cout << xN << " " << yN << endl;
+  auto [Mx, My] = coor(M);
+  auto [Nx, Ny] = coor(N);
   int ans = 0;
   if (xM == xN) {
     ans = yN - yM;
@@ -56,11 +54,7 @@ int main() {
     if (yM % 2 == 1) { // 正三角
       ans = 1 + getAnsFromDown(xM + 1, yM + 1, xN, yN);
     } else {
-      // dx = 2 * (xN - xM)
       ans = getAnsFromDown(xM, yM, xN, yN);
-      // cout << "dx " << dx << endl;
-      // cout << "dy " << dy << endl;
-      // cout << "y " << y1 << " " << y2 << " " << y3 << " " << y4 << endl;
     }
   }
   cout << ans << endl;
